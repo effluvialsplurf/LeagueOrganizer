@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
+
+	"github.com/effluvialsplurf/LeagueOrganizer/db"
 )
 
 func muxInit() *http.ServeMux {
@@ -15,8 +17,12 @@ func muxInit() *http.ServeMux {
 }
 
 func main() {
+	// initialize our database
+	log.Println("initializing database")
+	db.MustConnectDB()
+
 	// we start here
-	log.Println("starting server")
+	log.Println("db connected, now starting server")
 
 	// create our routing mutex
 	mux := muxInit()
