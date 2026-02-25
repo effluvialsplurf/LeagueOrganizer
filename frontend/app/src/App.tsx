@@ -7,9 +7,11 @@ import League from "./pages/League.tsx";
 import Settings from "./pages/Settings.tsx";
 import Standings from "./pages/Standings.tsx";
 import Stats from "./pages/Stats.tsx";
+import User from "./pages/user/User.tsx";
+import Login from "./pages/user/Login.tsx";
 
 export default function App() {
-
+  const isLoggedIn = false;
 
   return (
     <BrowserRouter>
@@ -21,6 +23,13 @@ export default function App() {
           <Route path="standings" element={<Standings />} />
           <Route path="stats" element={<Stats />} />
           <Route path="settings" element={<Settings />} />
+          {isLoggedIn ? (
+            <Route path="user" element={<User />}>
+              <Route path="login" element={<Login />} />
+            </Route>
+          ) : (
+            <Route path="login" element={<Login />} />
+          )}
         </Route>
 
         {/* 404 */}

@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 
 export default function NavBar() {
+  const isLoggedIn = false;
+
   return (
     <div className="flex">
       <div className="flex items-center">
@@ -19,6 +21,15 @@ export default function NavBar() {
         <Link to="/Stats" className="text-white hover:text-blue-300 ml-3">
           Stats
         </Link>
+        {isLoggedIn ? (
+          <Link to="/User" className="text-white hover:text-blue-300 ml-3">
+            User
+          </Link>
+        ) : (
+          <Link to="/Login" className="text-white hover:text-blue-300 ml-3">
+            Login
+          </Link>
+        )}
         <Link to="/Settings" className="text-white hover:text-blue-300 ml-3">
           Settings
         </Link>
