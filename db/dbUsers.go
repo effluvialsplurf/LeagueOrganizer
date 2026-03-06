@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"log"
+	"time"
 )
 
 // user model
@@ -112,7 +113,7 @@ func RetrieveOrCreateUser(name, teamName, password string) (User, bool, error) {
 		log.Fatalf("Failed to prepare statement: %v", err)
 	}
 
-	_, err = stmt.Exec(name, teamName, password, sql.NullString{}, sql.NullString{})
+	_, err = stmt.Exec(name, teamName, password, time.Now(), time.Now())
 	if err != nil {
 		log.Fatalf("Failed to execute statement: %v", err)
 	}
