@@ -12,6 +12,8 @@ func muxInit() *http.ServeMux {
 
 	mux.HandleFunc("/", RenderFrontend)
 	mux.HandleFunc("/testAPI", FirstApiFunc)
+	mux.HandleFunc("/api/createuser", handleCreateOrRetreiveUser)
+	mux.HandleFunc("/api/getuser", handleGetUser)
 
 	return mux
 }

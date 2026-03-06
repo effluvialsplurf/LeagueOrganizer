@@ -24,6 +24,12 @@ func ensureSchema() {
 	if err != nil {
 		log.Fatalf("Failed to create schema: %v", err)
 	}
+
+	// create an admin user for the application
+	_, err = RetrieveOrCreateUser("admin", "administrators", "admin")
+	if err != nil {
+		log.Fatalf("Failed to create admin user: %v", err)
+	}
 }
 
 func MustConnectDB() {
