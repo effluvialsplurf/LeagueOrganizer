@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"time"
 )
@@ -69,7 +70,7 @@ func GetUsers() ([]User, error) {
 	return users, nil
 }
 
-func GetUserByName(name string) (User, error) {
+func GetUserByName(name string, password string) (User, error) {
 	row := DB.QueryRow(`
 		SELECT id, name, team_name, password, created_at, updated_at
 		FROM users
@@ -86,6 +87,11 @@ func GetUserByName(name string) (User, error) {
 		&user.UpdatedAt,
 	)
 
+	correctCredentials := CheckPassword(user.Password, password)
+	if !correctCredentials {
+		return user, fmt.Errorf("incorrect credentials")
+	}
+
 	if err != nil {
 		log.Printf("Failed to scan row: %v", err)
 		return user, err
@@ -99,7 +105,7 @@ func GetUserByName(name string) (User, error) {
 func CreateUser(name, teamName, password string) (User, bool, error) {
 
 	// if the user already exists, we don't need to create it
-	user, err := GetUserByName(name)
+	user, err := GetUserByName(name, password)
 	if err == nil {
 		return user, false, nil
 	}
@@ -114,13 +120,18 @@ func CreateUser(name, teamName, password string) (User, bool, error) {
 		log.Fatalf("Failed to prepare statement: %v", err)
 	}
 
-	_, err = stmt.Exec(name, teamName, password, time.Now(), time.Now())
+	hashPassword, err := HashPassword(password)
+	if err != nil {
+		log.Fatalf("Failed to hash password: %v", err)
+	}
+
+	_, err = stmt.Exec(name, teamName, hashPassword, time.Now(), time.Now())
 	if err != nil {
 		log.Fatalf("Failed to execute statement: %v", err)
 	}
 
 	// if the user was created (i.e. the statement was executed), we need to retrieve it
-	user, err = GetUserByName(name)
+	user, err = GetUserByName(name, password)
 	if err != nil {
 		log.Fatalf("Failed to retrieve user: %v", err)
 	}

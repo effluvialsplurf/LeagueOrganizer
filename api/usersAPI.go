@@ -30,7 +30,9 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
-	user, err := db.GetUserByName(r.URL.Query().Get("name"))
+	name := r.URL.Query().Get("name")
+	password := r.URL.Query().Get("password")
+	user, err := db.GetUserByName(name, password)
 	if err != nil {
 		log.Println("failed to get user: ", err)
 		http.Error(w, "failed to get user", http.StatusInternalServerError)
