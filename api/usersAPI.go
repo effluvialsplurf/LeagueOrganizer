@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -11,6 +12,7 @@ import (
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	var user db.User
 	err := json.NewDecoder(r.Body).Decode(&user)
+	fmt.Println(user)
 	if err != nil {
 		log.Println("failed to decode json: ", err)
 		http.Error(w, "failed to decode json", http.StatusBadRequest)
@@ -18,13 +20,13 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var created bool
-	user, created, err = db.CreateUser(user.Name, user.TeamName, user.Password)
+	user, created, err = db.CreateUser(user.Username, user.TeamName, user.Password)
 	if !created {
+		log.Printf("user could not be created: %v", err)
 		http.Error(w, "user could not be created", http.StatusConflict)
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
-	return
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {

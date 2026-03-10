@@ -9,7 +9,7 @@ import (
 // user model
 type User struct {
 	ID        int64
-	Name      string
+	Username  string
 	TeamName  string
 	Password  string
 	CreatedAt sql.NullString
@@ -18,7 +18,7 @@ type User struct {
 
 // user methods
 func (u User) String() string {
-	return u.Name
+	return u.Username
 }
 
 func (u User) GetID() int64 {
@@ -26,7 +26,7 @@ func (u User) GetID() int64 {
 }
 
 func (u User) GetName() string {
-	return u.Name
+	return u.Username
 }
 
 func (u User) GetTeamName() string {
@@ -52,7 +52,7 @@ func GetUsers() ([]User, error) {
 		var user User
 		err := rows.Scan(
 			&user.ID,
-			&user.Name,
+			&user.Username,
 			&user.TeamName,
 			&user.Password,
 			&user.CreatedAt,
@@ -79,7 +79,7 @@ func GetUserByName(name string) (User, error) {
 	var user User
 	err := row.Scan(
 		&user.ID,
-		&user.Name,
+		&user.Username,
 		&user.TeamName,
 		&user.Password,
 		&user.CreatedAt,
