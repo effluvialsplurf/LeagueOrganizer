@@ -26,7 +26,7 @@ func ensureSchema() {
 	}
 
 	// create an admin user for the application
-	_, _, err = RetrieveOrCreateUser("admin", "administrators", "admin")
+	_, _, err = CreateUser("admin", "administrators", "admin")
 	if err != nil {
 		log.Fatalf("Failed to create admin user: %v", err)
 	}

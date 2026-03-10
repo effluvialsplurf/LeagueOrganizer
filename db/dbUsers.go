@@ -96,19 +96,20 @@ func GetUserByName(name string) (User, error) {
 
 // in the case that we return a user and true, we know that the user was created
 // if we return a user and false, we know that the user already existed
-func RetrieveOrCreateUser(name, teamName, password string) (User, bool, error) {
+func CreateUser(name, teamName, password string) (User, bool, error) {
+
 	// if the user already exists, we don't need to create it
 	user, err := GetUserByName(name)
 	if err == nil {
 		return user, false, nil
 	}
 
+	// if the user doesn't exist, we need to create it
 	var stmt *sql.Stmt
 	stmt, err = DB.Prepare(`
 		INSERT INTO users (name, team_name, password, created_at, updated_at)
 		VALUES (?, ?, ?, ?, ?)
 	`)
-
 	if err != nil {
 		log.Fatalf("Failed to prepare statement: %v", err)
 	}

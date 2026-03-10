@@ -18,7 +18,7 @@ func FirstApiFunc(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleCreateOrRetreiveUser(w http.ResponseWriter, r *http.Request) {
+func handleCreateUser(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "http method not allowed", http.StatusMethodNotAllowed)
 		return

@@ -4,7 +4,7 @@ const UserLogin = () => {
   const [username, setUsername] = useState("");
 
   const handleLogin = (username: string) => {
-    fetch("/api/getuser?name=" + username).then((data) => {
+    fetch("/api/users/get-by-name?name=" + username).then((data) => {
       console.log(data)
     })
   };

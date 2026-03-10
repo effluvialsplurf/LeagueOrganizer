@@ -18,9 +18,9 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var created bool
-	user, created, err = db.RetrieveOrCreateUser(user.Name, user.TeamName, user.Password)
+	user, created, err = db.CreateUser(user.Name, user.TeamName, user.Password)
 	if !created {
-		http.Error(w, "user already exists", http.StatusConflict)
+		http.Error(w, "user could not be created", http.StatusConflict)
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
