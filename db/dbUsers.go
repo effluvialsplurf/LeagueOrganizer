@@ -100,6 +100,26 @@ func GetUserByName(name string, password string) (User, error) {
 	return user, nil
 }
 
+func GetUserByNameOnly(name string, password string) (User, error) {
+	row := DB.QueryRow(`
+		SELECT id, name, team_name, password, created_at, updated_at
+		FROM users
+		WHERE name = ?
+	`, name)
+
+	var user User
+	err := row.Scan(
+		&user.ID,
+		&user.Username,
+		&user.TeamName,
+		&user.Password,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+
+	return user, err
+}
+
 // in the case that we return a user and true, we know that the user was created
 // if we return a user and false, we know that the user already existed
 func CreateUser(name, teamName, password string) (User, bool, error) {
@@ -131,7 +151,7 @@ func CreateUser(name, teamName, password string) (User, bool, error) {
 	}
 
 	// if the user was created (i.e. the statement was executed), we need to retrieve it
-	user, err = GetUserByName(name, password)
+	user, err = GetUserByNameOnly(name, password)
 	if err != nil {
 		log.Fatalf("Failed to retrieve user: %v", err)
 	}
