@@ -87,14 +87,17 @@ func GetUserByName(name string, password string) (User, error) {
 		&user.UpdatedAt,
 	)
 
-	correctCredentials := CheckPassword(user.Password, password)
-	if !correctCredentials {
-		return user, fmt.Errorf("incorrect credentials")
-	}
-
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return user, fmt.Errorf("user not found")
+		}
 		log.Printf("Failed to scan row: %v", err)
 		return user, err
+	}
+
+	correctCredentials := CheckPassword(password, user.Password)
+	if !correctCredentials {
+		return user, fmt.Errorf("incorrect credentials")
 	}
 
 	return user, nil
@@ -137,23 +140,23 @@ func CreateUser(name, teamName, password string) (User, bool, error) {
 		VALUES (?, ?, ?, ?, ?)
 	`)
 	if err != nil {
-		log.Fatalf("Failed to prepare statement: %v", err)
+		return user, false, fmt.Errorf("failed to prepare statement: %w", err)
 	}
 
 	hashPassword, err := HashPassword(password)
 	if err != nil {
-		log.Fatalf("Failed to hash password: %v", err)
+		return user, false, fmt.Errorf("failed to hash password: %w", err)
 	}
 
 	_, err = stmt.Exec(name, teamName, hashPassword, time.Now(), time.Now())
 	if err != nil {
-		log.Fatalf("Failed to execute statement: %v", err)
+		return user, false, fmt.Errorf("failed to execute statement: %w", err)
 	}
 
 	// if the user was created (i.e. the statement was executed), we need to retrieve it
 	user, err = GetUserByNameOnly(name, password)
 	if err != nil {
-		log.Fatalf("Failed to retrieve user: %v", err)
+		return user, false, fmt.Errorf("failed to retrieve user: %w", err)
 	}
 
 	return user, true, nil

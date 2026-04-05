@@ -2,10 +2,11 @@ import React, { useState } from "react";
 
 const UserLogin = () => {
   const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    fetch("/api/users/get-by-name?name=" + username).then((data) => {
+    fetch("/api/users/get-by-name?name=" + username + "&password=" + password).then((data) => {
       console.log(data);
     });
   };
@@ -20,6 +21,15 @@ const UserLogin = () => {
           placeholder="Enter your username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          autoFocus
+        />
+        <label className="block text-sm font-medium text-slate-300 text-left">Password</label>
+        <input
+          type="text"
+          className="input-base"
+          placeholder="Enter your password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           autoFocus
         />
       </div>

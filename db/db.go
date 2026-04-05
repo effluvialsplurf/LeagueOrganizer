@@ -14,7 +14,7 @@ func ensureSchema() {
 		CREATE TABLE IF NOT EXISTS users (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT NOT NULL,
-		  team_name TEXT NOT NULL,
+		  team_name TEXT NOT NULL UNIQUE,
 			password TEXT NOT NULL,
 			created_at TEXT NOT NULL,
 			updated_at TEXT NOT NULL
