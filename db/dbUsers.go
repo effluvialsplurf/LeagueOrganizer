@@ -9,12 +9,12 @@ import (
 
 // user model
 type User struct {
-	ID        int64
-	Username  string
-	TeamName  string
-	Password  string
-	CreatedAt sql.NullString
-	UpdatedAt sql.NullString
+	ID        int64          `json:"id"`
+	Username  string         `json:"username"`
+	TeamName  string         `json:"teamName"`
+	Password  string         `json:"-"`
+	CreatedAt sql.NullString `json:"createdAt"`
+	UpdatedAt sql.NullString `json:"updatedAt"`
 }
 
 // user methods

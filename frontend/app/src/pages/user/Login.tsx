@@ -1,18 +1,37 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "../../contexts/UserContext.tsx";
 
 const UserLogin = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const { login } = useUser();
+  const navigate = useNavigate();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    fetch("/api/users/get-by-name?name=" + username + "&password=" + password).then((data) => {
-      console.log(data);
-    });
+    setError("");
+    fetch("/api/users/get-by-name?name=" + username + "&password=" + password)
+      .then(async (res) => {
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || "Login failed");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        login(data);
+        navigate("/user");
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
   };
 
   return (
     <form onSubmit={handleLogin} className="space-y-4">
+      {error && <div className="text-red-500 text-sm text-center">{error}</div>}
       <div className="space-y-2">
         <label className="block text-sm font-medium text-slate-300 text-left">Username</label>
         <input
@@ -21,16 +40,14 @@ const UserLogin = () => {
           placeholder="Enter your username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          autoFocus
         />
         <label className="block text-sm font-medium text-slate-300 text-left">Password</label>
         <input
-          type="text"
+          type="password"
           className="input-base"
           placeholder="Enter your password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          autoFocus
         />
       </div>
       <button
@@ -43,14 +60,22 @@ const UserLogin = () => {
   );
 };
 
-const UserRegister = () => {
+const UserRegister = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
   const [username, setUsername] = useState("");
   const [teamName, setTeamName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
     fetch("/api/users/create", {
       method: "POST",
       headers: {
@@ -61,13 +86,22 @@ const UserRegister = () => {
         teamName,
         password,
       }),
-    }).then((data) => {
-      console.log(data);
-    });
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || "Registration failed");
+        }
+        onRegisterSuccess();
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
   };
 
   return (
     <form onSubmit={handleRegister} className="space-y-4 text-left">
+      {error && <div className="text-red-500 text-sm text-center">{error}</div>}
       <div className="space-y-2">
         <label className="block text-sm font-medium text-slate-300">Username</label>
         <input type="text" className="input-base" placeholder="Choose a username" value={username} onChange={(e) => setUsername(e.target.value)} />
@@ -109,7 +143,11 @@ export default function Login() {
           </p>
         </div>
 
-        {isRegistering ? <UserRegister /> : <UserLogin />}
+        {isRegistering ? (
+          <UserRegister onRegisterSuccess={() => setIsRegistering(false)} />
+        ) : (
+          <UserLogin />
+        )}
 
         <div className="mt-8 text-sm text-slate-400">
           {isRegistering ? (

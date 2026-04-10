@@ -9,32 +9,39 @@ import Standings from "./pages/Standings.tsx";
 import Stats from "./pages/Stats.tsx";
 import User from "./pages/user/User.tsx";
 import Login from "./pages/user/Login.tsx";
+import { UserProvider, useUser } from "./contexts/UserContext.tsx";
 
-export default function App() {
-  const isLoggedIn = false;
+function AppRoutes() {
+  const { isLoggedIn } = useUser();
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="bracket" element={<Bracket />} />
-          <Route path="league" element={<League />} />
-          <Route path="standings" element={<Standings />} />
-          <Route path="stats" element={<Stats />} />
-          <Route path="settings" element={<Settings />} />
-          {isLoggedIn ? (
-            <Route path="user" element={<User />}>
-              <Route path="login" element={<Login />} />
-            </Route>
-          ) : (
-            <Route path="login" element={<Login />} />
-          )}
-        </Route>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="bracket" element={<Bracket />} />
+        <Route path="league" element={<League />} />
+        <Route path="standings" element={<Standings />} />
+        <Route path="stats" element={<Stats />} />
+        <Route path="settings" element={<Settings />} />
+        {isLoggedIn ? (
+          <Route path="user" element={<User />} />
+        ) : (
+          <Route path="login" element={<Login />} />
+        )}
+      </Route>
 
-        {/* 404 */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter >
+      {/* 404 */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}
+
+export default function App() {
+  return (
+    <UserProvider>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </UserProvider>
   )
 }
