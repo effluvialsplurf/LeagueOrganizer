@@ -31,3 +31,9 @@ go.work.sum
 data/*.db
 data/*.db-shm
 data/*.db-wal
+
+# Crush data directory
+.crush/
+
+# Debug log
+tea_debug.log
